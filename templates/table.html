@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Taltech cafes</title>
+    <style>
+        /* GENERAL RESET & BASE */
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background-image: url("http://localhost:3000/static/images/TalTech_background.jpg") ;
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: 100% 100%;
+            color: #000000;
+            padding: 2rem;
+        }
+
+        h2, h1 {
+            color: #342b60; /* TT DARK BLUE */
+            margin-top: 0;
+        }
+
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            align-items: flex-start;
+        }
+
+        /* TABLE STYLING */
+        .cafes-table {
+            flex: 2 1 600px;
+            width: 100%;
+            max-width: 900px;
+            border-collapse: collapse;
+            margin-bottom: 2rem;
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+        }
+
+        .cafes-table thead {
+            background-color: #aa1352; /* TT BURGUNDY */
+            color: white;
+        }
+
+        .cafes-table th,
+        .cafes-table td {
+            padding: 0.75rem 1rem;
+            text-align: left;
+            border-bottom: 1px solid #dadae4; /* TT GREY 2 */
+        }
+
+        .cafes-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .cafes-table tbody tr:hover {
+            background-color: #f3f3f9;
+        }
+
+        /* FORM CONTAINER */
+        .form {
+            flex: 1 1 300px;
+            background-color: rgba(218, 218, 228, 0.95); /* TT GREY 2 with transparency */
+            padding: 2rem;
+            border-radius: 12px;
+            max-width: 500px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #342b60; /* TT DARK BLUE */
+            font-weight: bold;
+        }
+
+        select,
+        input[type="text"],
+        input[type="number"],
+        input[type="time"] {
+            width: 100%;
+            padding: 0.5rem;
+            margin-bottom: 1rem;
+            border: 1px solid #9396b0; /* TT GREY 1 */
+            border-radius: 8px;
+            background-color: #ffffff;
+            box-sizing: border-box;
+        }
+
+        input[type="submit"] {
+            background-color: #4dbed2; /* TT LIGHT BLUE */
+            color: white;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #379db1;
+        }
+
+        /* FORM SECTIONS */
+        .form-section {
+            display: none;
+            margin-top: 1rem;
+        }
+
+        /* FORM HEADER */
+        .form-section header h2 {
+            color: #aa1352; /* TT BURGUNDY */
+            margin-bottom: 1rem;
+        }
+
+        /* DROPDOWN */
+        #formSelector {
+            margin-top: 0.5rem;
+            margin-bottom: 1.5rem;
+            padding: 0.5rem;
+            border-radius: 8px;
+            border: 1px solid #9396b0;
+            background-color: #ffffff;
+        }
+
+        /* RESPONSIVENESS */
+        @media (max-width: 768px) {
+            .container {
+            flex-direction: column;
+            }
+        }
+    </style>
+
+</head>
+<body>
+    <h1>TalTech campus cafes database</h1>
+    <div class="container">
+        <table class="cafes-table">
+            <thead>
+                <tr>
+                    {% for col in colnames %}
+                    <th>{{ col }}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for result in results %}
+                <tr>
+                    {% for col in colnames %}
+                    <td>{{ result[col] }}</td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div class="form">
+          <label for="formSelector"><strong>Select action</strong></label>
+          <select id="formSelector" onchange="showForm()">
+            <option value="choose" selected>-- Choose an action --</option>
+            <option value="find">Find open cafe</option>
+            <option value="change">Change cafe data</option>
+            <option value="add">Add new cafe</option>
+            <option value="delete">Delete cafe</option>
+          </select>
+
+
+            <div id="choose" class="form-section">
+            <form action="http://localhost:3000/" method="GET">
+            </form>
+          </div>
+
+          <!-- Find form -->
+          <div id="find" class="form-section">
+            <header><h2>Find open cafe</h2></header>
+            <form action="http://localhost:3000/filtering" method="POST">
+              <p>From <input type="time" name="From" /></p>
+              <p>To <input type="time" name="To" /></p>
+              <p><input type="submit" value="Find" /></p>
+            </form>
+          </div>
+
+          <!-- Change form -->
+          <div id="change" class="form-section">
+            <header><h2>Change cafe data</h2></header>
+            <form action="http://localhost:3000/change" method="POST">
+              <p>ID <input type="number" name="id" min="0" /></p>
+              <p>Name <input type="text" name="name" /></p>
+              <p>Location <input type="text" name="location" /></p>
+              <p>Open <input type="time" name="open" /></p>
+              <p>Close <input type="time" name="close" /></p>
+              <p><input type="submit" value="Change" /></p>
+            </form>
+          </div>
+
+          <!-- Add form -->
+          <div id="add" class="form-section">
+            <header><h2>Add new cafe</h2></header>
+            <form action="http://localhost:3000/add" method="POST">
+              <p>Name <input type="text" name="name" /></p>
+              <p>Location <input type="text" name="location" /></p>
+              <p>Open <input type="time" name="open" /></p>
+              <p>Close <input type="time" name="close" /></p>
+              <p><input type="submit" value="Add" /></p>
+            </form>
+          </div>
+
+          <!-- Delete form -->
+          <div id="delete" class="form-section">
+            <header><h2>Delete cafe</h2></header>
+            <form action="http://localhost:3000/delete" method="POST">
+              <p>ID <input type="number" name="id" min="0" /></p>
+              <p><input type="submit" value="Delete" /></p>
+            </form>
+          </div>
+        </div>
+    </div>
+
+      <script>
+        function showForm() {
+          const selected = document.getElementById('formSelector').value;
+          const forms = document.querySelectorAll('.form-section');
+          forms.forEach(form => {
+            form.style.display = form.id === selected ? 'block' : 'none';
+          });
+        }
+      </script>
+</body>
+</html>
