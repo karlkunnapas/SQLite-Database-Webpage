@@ -23,6 +23,8 @@ To enhance UI/UX, the webpage was styled using CSS and designed with TalTech's o
 
 The UI uses TalTech's official color palette and background to match the theme of the project.
 
+![Web App Screenshot](./Web%20app%20screenshot.png)
+
 ## Technical Highlights
 
 * SQLite database setup and query handling
